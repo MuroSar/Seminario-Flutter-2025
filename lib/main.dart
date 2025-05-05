@@ -44,7 +44,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('Contador'),
+            const Text('Counter'),
             Padding(
               padding: const EdgeInsets.all(16),
               child: StreamBuilder(
@@ -54,13 +54,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
                   switch (state.runtimeType) {
                     case ErrorBlocState:
-                      return Text('Hubo un error');
+                      return Text('There was an error');
                     case LoadingBlocState:
                       return CircularProgressIndicator();
                     case SuccessBlocState:
                       return Text('${state.counterValue}');
                     case EmptyBlocState:
-                      return Text('No hay nada');
+                      return Text('It is empty');
                     default:
                       return Text('Default');
                   }
@@ -72,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
               children: [
                 FilledButton(
                   onPressed: _counterBloc.incrementCounter,
-                  child: Text('Incrementar Contador'),
+                  child: Text('Increment counter'),
                 ),
                 FilledButton(
                   onPressed: _counterBloc.throwError,
