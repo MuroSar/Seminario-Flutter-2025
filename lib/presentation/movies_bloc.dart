@@ -7,21 +7,24 @@ import 'package:seminario_flutter/presentation/bloc_state.dart';
 import '../core/bloc/i_bloc.dart';
 
 class MoviesBloc implements IBloc {
-  MoviesBloc({required this.getPopularMoviesUseCase, required this.getTopRatedMoviesUseCase});
+  MoviesBloc({
+    required this.getPopularMoviesUseCase,
+    required this.getTopRatedMoviesUseCase,
+  });
 
   final IUseCase getPopularMoviesUseCase;
   final IUseCase getTopRatedMoviesUseCase;
 
-  final _streamController = StreamController<BlocState>();
+  final _streamController = StreamController<BlocState>.broadcast();
+
+  Stream<BlocState> get moviesStream => _streamController.stream;
 
   void getPopularMovies() async {
     _streamController.sink.add(LoadingBlocState());
 
     try {
       final List<Movie> movieList = await getPopularMoviesUseCase.call();
-      for (Movie movie in movieList) {
-        print(movie.title);
-      }
+      _streamController.sink.add(SuccessBlocState<List<Movie>>(movieList));
     } catch (error) {
       print('$error');
       _streamController.sink.add(ErrorBlocState());
@@ -33,9 +36,7 @@ class MoviesBloc implements IBloc {
 
     try {
       final List<Movie> movieList = await getTopRatedMoviesUseCase.call();
-      for (Movie movie in movieList) {
-        print(movie.title);
-      }
+      _streamController.sink.add(SuccessBlocState<List<Movie>>(movieList));
     } catch (error) {
       print('$error');
       _streamController.sink.add(ErrorBlocState());
@@ -44,7 +45,7 @@ class MoviesBloc implements IBloc {
 
   @override
   void dispose() {
-   _streamController.close();
+    _streamController.close();
   }
 
   @override
