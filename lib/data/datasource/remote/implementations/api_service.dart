@@ -15,7 +15,9 @@ class ApiService implements IApiService {
 
   @override
   Future<CharacterResponse> getCharacters({required String endpoint}) async {
-    final response = await http.get(Uri.parse('$endpoint$_apiKey$_apiKeyValue'));
+    final response = await http.get(
+      Uri.parse('$endpoint$_apiKey$_apiKeyValue'),
+    );
     if (response.statusCode == HttpStatus.ok) {
       return CharacterResponse.fromJson(jsonDecode(response.body));
     } else {
@@ -25,7 +27,9 @@ class ApiService implements IApiService {
 
   @override
   Future<MovieResponse> getMoviesByType({required String endpoint}) async {
-    final response = await http.get(Uri.parse('$endpoint$_apiKey$_apiKeyValue'));
+    final response = await http.get(
+      Uri.parse('$endpoint$_apiKey$_apiKeyValue'),
+    );
 
     if (response.statusCode == HttpStatus.ok) {
       var movieResponse = MovieResponse.fromJson(jsonDecode(response.body));

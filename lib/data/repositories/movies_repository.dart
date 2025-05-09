@@ -4,21 +4,21 @@ import 'package:seminario_flutter/domain/repositories/i_movies_repository.dart';
 
 import '../models/movie_response.dart';
 
-class MoviesRepository implements IMoviesRepository{
+class MoviesRepository implements IMoviesRepository {
   MoviesRepository({required this.apiService});
 
   final IApiService apiService;
 
   @override
   Future<List<Movie>> getMoviesByType(String endpoint) async {
-
-    try{
-      final MovieResponse response = await apiService.getMoviesByType(endpoint: endpoint);
+    try {
+      final MovieResponse response = await apiService.getMoviesByType(
+        endpoint: endpoint,
+      );
 
       return response.results;
-    } catch (error){
+    } catch (error) {
       throw Exception('Error connecting with the API');
     }
   }
-
 }

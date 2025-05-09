@@ -31,6 +31,8 @@ class Movie {
     this.voteCount,
   });
 
+  String get fullPosterPath => 'https://image.tmdb.org/t/p/w500/$posterPath';
+
   factory Movie.fromJson(Map<String, dynamic> json) {
     return Movie(
       adult: json['adult'],

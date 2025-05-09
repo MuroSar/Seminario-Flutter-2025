@@ -23,6 +23,8 @@ class Character {
     this.knownFor,
   });
 
+  String get fullProfilePath => 'https://image.tmdb.org/t/p/w500/$profilePath';
+
   factory Character.fromJson(Map<String, dynamic> json) {
     return Character(
       adult: json["adult"],

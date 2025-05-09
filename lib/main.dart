@@ -10,23 +10,60 @@ import 'package:seminario_flutter/domain/usecases/implementations/get_top_rated_
 import 'package:seminario_flutter/domain/usecases/interfaces/i_usecase.dart';
 import 'package:seminario_flutter/presentation/characters_bloc.dart';
 import 'package:seminario_flutter/presentation/movies_bloc.dart';
+import 'package:seminario_flutter/presentation/screens/popular_characters.dart';
+import 'package:seminario_flutter/presentation/screens/popular_movies.dart';
+import 'package:seminario_flutter/presentation/screens/top_rated_movies.dart';
 
 void main() {
-  runApp(const MyApp());
-}
+  final apiService = ApiService();
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final IMoviesRepository moviesRepository = MoviesRepository(
+    apiService: apiService,
+  );
 
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
+  final ICharactersRepository charactersRepository = CharactersRepository(
+    apiService: apiService,
+  );
+
+  final IUseCase getPopularMoviesUseCase = GetPopularMoviesUseCase(
+    moviesRepository,
+  );
+
+  final IUseCase getTopRatedMoviesUseCase = GetTopRatedMoviesUseCase(
+    moviesRepository,
+  );
+
+  final IUseCase getPopularCharacters = GetPopularCharactersUseCase(
+    charactersRepository,
+  );
+
+  final movieBloc = MoviesBloc(
+    getPopularMoviesUseCase: getPopularMoviesUseCase,
+    getTopRatedMoviesUseCase: getTopRatedMoviesUseCase,
+  );
+
+  final characterBloc = CharactersBloc(
+    getCharactersUseCase: getPopularCharacters,
+  );
+  runApp(
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue)),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+      ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
+      routes: <String, WidgetBuilder>{
+        '/popular-movies':
+            (BuildContext context) => PopularMovies(moviesBloc: movieBloc),
+        '/top-rated-movies':
+            (BuildContext context) => TopRatedMovies(moviesBloc: movieBloc),
+        '/popular-characters':
+            (BuildContext context) =>
+                PopularCharacters(charactersBloc: characterBloc),
+      },
+    ),
+  );
 }
 
 class MyHomePage extends StatefulWidget {
@@ -43,26 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
   late final CharactersBloc _charactersBloc;
 
   @override
-  void initState() {
-    final apiService = ApiService();
-
-    final IMoviesRepository moviesRepository = MoviesRepository(apiService: apiService);
-
-    final ICharactersRepository charactersRepository = CharactersRepository(apiService: apiService);
-
-    final IUseCase getPopularMoviesUseCase = GetPopularMoviesUseCase(moviesRepository);
-
-    final IUseCase getTopRatedMoviesUseCase = GetTopRatedMoviesUseCase(moviesRepository);
-
-    final IUseCase getPopularCharacters = GetPopularCharactersUseCase(charactersRepository);
-
-    _moviesBloc = MoviesBloc(getPopularMoviesUseCase: getPopularMoviesUseCase, getTopRatedMoviesUseCase: getTopRatedMoviesUseCase);
-
-    _charactersBloc = CharactersBloc(getCharactersUseCase: getPopularCharacters);
-
-    _moviesBloc.initialize();
-    _charactersBloc.initialize();
-  }
+  void initState() {}
 
   @override
   void dispose() {
@@ -73,26 +91,29 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(backgroundColor: Theme.of(context).colorScheme.inversePrimary, title: Text(widget.title)),
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text(widget.title),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             OutlinedButton(
               onPressed: () {
-                _moviesBloc.getPopularMovies();
+                Navigator.pushNamed(context, '/popular-movies');
               },
               child: Text('Popular'),
             ),
             OutlinedButton(
               onPressed: () {
-                _moviesBloc.getTopRatedMovies();
+                Navigator.pushNamed(context, '/top-rated-movies');
               },
               child: Text('Top Rated'),
             ),
             OutlinedButton(
               onPressed: () {
-                _charactersBloc.getPopularCharacters();
+                Navigator.pushNamed(context, '/popular-characters');
               },
               child: Text('Characters'),
             ),
