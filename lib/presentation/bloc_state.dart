@@ -1,4 +1,4 @@
-abstract class BlocState{}
+abstract class BlocState {}
 
 class LoadingBlocState extends BlocState {}
 
@@ -11,4 +11,3 @@ class SuccessBlocState<T> extends BlocState {
 class ErrorBlocState extends BlocState {}
 
 class EmptyBlocState extends BlocState {}
-

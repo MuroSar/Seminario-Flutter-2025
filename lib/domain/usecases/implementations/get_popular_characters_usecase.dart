@@ -9,6 +9,8 @@ class GetPopularCharactersUseCase implements IUseCase {
 
   @override
   Future call() async {
-    return await repository.getCharacters(ApiConstants.popularCharactersEndpoint);
+    return await repository.getCharacters(
+      ApiConstants.popularCharactersEndpoint,
+    );
   }
 }

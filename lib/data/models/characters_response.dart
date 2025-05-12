@@ -13,15 +13,17 @@ class CharacterResponse {
     required this.totalResult,
   });
 
-  factory CharacterResponse.fromJson(Map<String, dynamic> json) => CharacterResponse(
-    results: fromList(json['results']),
-    page: json['page'],
-    totalPages: json['total_pages'],
-    totalResult: json['total_results'],
-  );
+  factory CharacterResponse.fromJson(Map<String, dynamic> json) =>
+      CharacterResponse(
+        results: fromList(json['results']),
+        page: json['page'],
+        totalPages: json['total_pages'],
+        totalResult: json['total_results'],
+      );
 
   static List<Character> fromList(List<dynamic> json) {
-    return List<Character>.from(json.map((character) => Character.fromJson(character)));
+    return List<Character>.from(
+      json.map((character) => Character.fromJson(character)),
+    );
   }
 }
-
