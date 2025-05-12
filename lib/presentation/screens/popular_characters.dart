@@ -80,7 +80,7 @@ class CharacterCard extends StatelessWidget {
 
   List<Widget> buildWidgetList() {
     final widgetList = <Widget>[];
-    for (Movie movie in characters.knownFor!) {
+    for (Movie movie in characters.knowForMovies) {
       if (movie.title != null) {
         widgetList.add(Text(movie.title!));
       }
