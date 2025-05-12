@@ -1,22 +1,54 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:seminario_flutter/core/api_constants.dart';
 import 'package:seminario_flutter/data/datasource/remote/interfaces/i_api_service.dart';
 import 'package:seminario_flutter/domain/entities/movie.dart';
 import 'package:seminario_flutter/domain/repositories/i_movies_repository.dart';
 
+import '../datasource/local/interfaces/i_local_database.dart';
 import '../models/movie_response.dart';
 
 class MoviesRepository implements IMoviesRepository {
-  MoviesRepository({required this.apiService});
+  MoviesRepository({required this.apiService, required this.databaseService});
 
   final IApiService apiService;
+  final ILocalDatabase databaseService;
 
   @override
-  Future<List<Movie>> getMoviesByType(String endpoint) async {
+  Future<List<Movie>> getPopularMovies() async {
     try {
-      final MovieResponse response = await apiService.getMoviesByType(
-        endpoint: endpoint,
-      );
+      final connectivity = await Connectivity().checkConnectivity();
 
-      return response.results;
+      if (connectivity.contains(ConnectivityResult.none)) {
+        return await databaseService.getPopularMovies();
+      } else {
+        final MovieResponse response = await apiService.getPopularMovies();
+
+        for (final Movie movie in response.results) {
+          await databaseService.insertMovie(movie);
+        }
+        return response.results;
+      }
+
+    } catch (error) {
+      throw Exception('Error connecting with the API');
+    }
+  }
+
+  @override
+  Future<List<Movie>> getTopRatedMovies() async {
+    try {
+      final connectivity = await Connectivity().checkConnectivity();
+
+      if (connectivity.contains(ConnectivityResult.none)) {
+        return await databaseService.getPopularMovies();
+      } else {
+        final MovieResponse response = await apiService.getTopRatedMovies();
+        for (final Movie movie in response.results) {
+          await databaseService.insertMovie(movie);
+        }
+        return response.results;
+      }
+
     } catch (error) {
       throw Exception('Error connecting with the API');
     }

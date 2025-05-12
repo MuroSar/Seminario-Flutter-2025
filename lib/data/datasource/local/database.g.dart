@@ -245,8 +245,18 @@ class _$CharacterDao extends CharacterDao {
   final InsertionAdapter<Character> _characterInsertionAdapter;
 
   @override
-  Future<void> getCharacters() async {
-    await _queryAdapter.queryNoReturn('SELECT * FROM Character LIMIT 20');
+  Future<List<Character>> getCharacters() async {
+    return _queryAdapter.queryList('SELECT * FROM Character LIMIT 20',
+        mapper: (Map<String, Object?> row) => Character(
+            adult: row['adult'] == null ? null : (row['adult'] as int) != 0,
+            gender: row['gender'] as int?,
+            id: row['id'] as int?,
+            knownForDepartment: row['knownForDepartment'] as String?,
+            name: row['name'] as String?,
+            originalName: row['originalName'] as String?,
+            popularity: row['popularity'] as int?,
+            profilePath: row['profilePath'] as String?,
+            knownFor: row['knownFor'] as String?));
   }
 
   @override

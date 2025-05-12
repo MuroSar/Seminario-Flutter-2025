@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:seminario_flutter/data/datasource/local/implementations/sqflite_database.dart';
 import 'package:seminario_flutter/data/datasource/remote/implementations/api_service.dart';
 import 'package:seminario_flutter/data/repositories/characters_repository.dart';
 import 'package:seminario_flutter/data/repositories/movies_repository.dart';
@@ -14,15 +15,20 @@ import 'package:seminario_flutter/presentation/screens/popular_characters.dart';
 import 'package:seminario_flutter/presentation/screens/popular_movies.dart';
 import 'package:seminario_flutter/presentation/screens/top_rated_movies.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   final apiService = ApiService();
+  final databaseService = await SqfliteDatabase.getInstance();
 
   final IMoviesRepository moviesRepository = MoviesRepository(
     apiService: apiService,
+    databaseService: databaseService,
   );
 
   final ICharactersRepository charactersRepository = CharactersRepository(
     apiService: apiService,
+    databaseService: databaseService,
   );
 
   final IUseCase getPopularMoviesUseCase = GetPopularMoviesUseCase(

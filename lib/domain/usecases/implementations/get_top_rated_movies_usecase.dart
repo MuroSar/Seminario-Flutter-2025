@@ -9,6 +9,6 @@ class GetTopRatedMoviesUseCase implements IUseCase {
 
   @override
   Future call() async {
-    return await repository.getMoviesByType(ApiConstants.topRatedEndpoint);
+    return await repository.getTopRatedMovies();
   }
 }
