@@ -13,7 +13,7 @@ class Character {
   final String? knownForDepartment;
   final String? name;
   final String? originalName;
-  final int? popularity;
+  final double? popularity;
   final String? profilePath;
   final String? knownFor;
 

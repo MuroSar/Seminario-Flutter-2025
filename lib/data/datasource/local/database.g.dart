@@ -54,15 +54,12 @@ class _$AppDatabaseBuilder implements $AppDatabaseBuilderContract {
 
   @override
   Future<AppDatabase> build() async {
-    final path = name != null
-        ? await sqfliteDatabaseFactory.getDatabasePath(name!)
-        : ':memory:';
+    final path =
+        name != null
+            ? await sqfliteDatabaseFactory.getDatabasePath(name!)
+            : ':memory:';
     final database = _$AppDatabase();
-    database.database = await database.open(
-      path,
-      _migrations,
-      _callback,
-    );
+    database.database = await database.open(path, _migrations, _callback);
     return database;
   }
 }
@@ -92,15 +89,21 @@ class _$AppDatabase extends AppDatabase {
       },
       onUpgrade: (database, startVersion, endVersion) async {
         await MigrationAdapter.runMigrations(
-            database, startVersion, endVersion, migrations);
+          database,
+          startVersion,
+          endVersion,
+          migrations,
+        );
 
         await callback?.onUpgrade?.call(database, startVersion, endVersion);
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Movie` (`adult` INTEGER, `backdropPath` TEXT, `id` INTEGER, `originalLanguage` TEXT, `originalTitle` TEXT, `overview` TEXT, `popularity` INTEGER, `posterPath` TEXT, `releaseDate` TEXT, `title` TEXT, `video` INTEGER, `voteAverage` INTEGER, `voteCount` INTEGER, PRIMARY KEY (`id`))');
+          'CREATE TABLE IF NOT EXISTS `Movie` (`adult` INTEGER, `backdropPath` TEXT, `id` INTEGER NOT NULL, `originalLanguage` TEXT, `originalTitle` TEXT, `overview` TEXT, `popularity` REAL, `posterPath` TEXT, `releaseDate` TEXT, `title` TEXT, `video` INTEGER, `voteAverage` REAL, `voteCount` INTEGER, PRIMARY KEY (`id`))',
+        );
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Character` (`adult` INTEGER, `gender` INTEGER, `id` INTEGER, `knownForDepartment` TEXT, `name` TEXT, `originalName` TEXT, `popularity` INTEGER, `profilePath` TEXT, `knownFor` TEXT, PRIMARY KEY (`id`))');
+          'CREATE TABLE IF NOT EXISTS `Character` (`adult` INTEGER, `gender` INTEGER, `id` INTEGER, `knownForDepartment` TEXT, `name` TEXT, `originalName` TEXT, `popularity` REAL, `profilePath` TEXT, `knownFor` TEXT, PRIMARY KEY (`id`))',
+        );
 
         await callback?.onCreate?.call(database, version);
       },
@@ -120,28 +123,27 @@ class _$AppDatabase extends AppDatabase {
 }
 
 class _$MovieDao extends MovieDao {
-  _$MovieDao(
-    this.database,
-    this.changeListener,
-  )   : _queryAdapter = QueryAdapter(database),
-        _movieInsertionAdapter = InsertionAdapter(
-            database,
-            'Movie',
-            (Movie item) => <String, Object?>{
-                  'adult': item.adult == null ? null : (item.adult! ? 1 : 0),
-                  'backdropPath': item.backdropPath,
-                  'id': item.id,
-                  'originalLanguage': item.originalLanguage,
-                  'originalTitle': item.originalTitle,
-                  'overview': item.overview,
-                  'popularity': item.popularity,
-                  'posterPath': item.posterPath,
-                  'releaseDate': item.releaseDate,
-                  'title': item.title,
-                  'video': item.video == null ? null : (item.video! ? 1 : 0),
-                  'voteAverage': item.voteAverage,
-                  'voteCount': item.voteCount
-                });
+  _$MovieDao(this.database, this.changeListener)
+    : _queryAdapter = QueryAdapter(database),
+      _movieInsertionAdapter = InsertionAdapter(
+        database,
+        'Movie',
+        (Movie item) => <String, Object?>{
+          'adult': item.adult == null ? null : (item.adult! ? 1 : 0),
+          'backdropPath': item.backdropPath,
+          'id': item.id,
+          'originalLanguage': item.originalLanguage,
+          'originalTitle': item.originalTitle,
+          'overview': item.overview,
+          'popularity': item.popularity,
+          'posterPath': item.posterPath,
+          'releaseDate': item.releaseDate,
+          'title': item.title,
+          'video': item.video == null ? null : (item.video! ? 1 : 0),
+          'voteAverage': item.voteAverage,
+          'voteCount': item.voteCount,
+        },
+      );
 
   final sqflite.DatabaseExecutor database;
 
@@ -153,61 +155,71 @@ class _$MovieDao extends MovieDao {
 
   @override
   Future<List<Movie>> getAllMovies() async {
-    return _queryAdapter.queryList('Select * from Movie',
-        mapper: (Map<String, Object?> row) => Movie(
+    return _queryAdapter.queryList(
+      'Select * from Movie',
+      mapper:
+          (Map<String, Object?> row) => Movie(
             adult: row['adult'] == null ? null : (row['adult'] as int) != 0,
             backdropPath: row['backdropPath'] as String?,
-            id: row['id'] as int?,
+            id: row['id'] as int,
             originalLanguage: row['originalLanguage'] as String?,
             originalTitle: row['originalTitle'] as String?,
             overview: row['overview'] as String?,
-            popularity: row['popularity'] as int?,
+            popularity: row['popularity'] as double?,
             posterPath: row['posterPath'] as String?,
             releaseDate: row['releaseDate'] as String?,
             title: row['title'] as String?,
             video: row['video'] == null ? null : (row['video'] as int) != 0,
-            voteAverage: row['voteAverage'] as int?,
-            voteCount: row['voteCount'] as int?));
+            voteAverage: row['voteAverage'] as double?,
+            voteCount: row['voteCount'] as int?,
+          ),
+    );
   }
 
   @override
   Future<List<Movie>> getPopularMovies() async {
     return _queryAdapter.queryList(
-        'Select * from Movie ORDER BY popularity DESC LIMIT 20',
-        mapper: (Map<String, Object?> row) => Movie(
+      'Select * from Movie ORDER BY popularity DESC LIMIT 20',
+      mapper:
+          (Map<String, Object?> row) => Movie(
             adult: row['adult'] == null ? null : (row['adult'] as int) != 0,
             backdropPath: row['backdropPath'] as String?,
-            id: row['id'] as int?,
+            id: row['id'] as int,
             originalLanguage: row['originalLanguage'] as String?,
             originalTitle: row['originalTitle'] as String?,
             overview: row['overview'] as String?,
-            popularity: row['popularity'] as int?,
+            popularity: row['popularity'] as double?,
             posterPath: row['posterPath'] as String?,
             releaseDate: row['releaseDate'] as String?,
             title: row['title'] as String?,
             video: row['video'] == null ? null : (row['video'] as int) != 0,
-            voteAverage: row['voteAverage'] as int?,
-            voteCount: row['voteCount'] as int?));
+            voteAverage: row['voteAverage'] as double?,
+            voteCount: row['voteCount'] as int?,
+          ),
+    );
   }
 
   @override
   Future<List<Movie>> getTopRatedMovies() async {
     return _queryAdapter.queryList(
-        'Select * from Movie ORDER BY voteAverage DESC LIMIT 20',
-        mapper: (Map<String, Object?> row) => Movie(
+      'Select * from Movie ORDER BY voteAverage DESC LIMIT 20',
+      mapper:
+          (Map<String, Object?> row) => Movie(
             adult: row['adult'] == null ? null : (row['adult'] as int) != 0,
             backdropPath: row['backdropPath'] as String?,
-            id: row['id'] as int?,
+            id: row['id'] as int,
             originalLanguage: row['originalLanguage'] as String?,
             originalTitle: row['originalTitle'] as String?,
             overview: row['overview'] as String?,
-            popularity: row['popularity'] as int?,
+            popularity: row['popularity'] as double?,
             posterPath: row['posterPath'] as String?,
             releaseDate: row['releaseDate'] as String?,
             title: row['title'] as String?,
             video: row['video'] == null ? null : (row['video'] as int) != 0,
-            voteAverage: row['voteAverage'] as int?,
-            voteCount: row['voteCount'] as int?));
+            voteAverage: row['voteAverage'] as double?,
+            voteCount: row['voteCount'] as int?,
+          ),
+    );
   }
 
   @override
@@ -217,24 +229,23 @@ class _$MovieDao extends MovieDao {
 }
 
 class _$CharacterDao extends CharacterDao {
-  _$CharacterDao(
-    this.database,
-    this.changeListener,
-  )   : _queryAdapter = QueryAdapter(database),
-        _characterInsertionAdapter = InsertionAdapter(
-            database,
-            'Character',
-            (Character item) => <String, Object?>{
-                  'adult': item.adult == null ? null : (item.adult! ? 1 : 0),
-                  'gender': item.gender,
-                  'id': item.id,
-                  'knownForDepartment': item.knownForDepartment,
-                  'name': item.name,
-                  'originalName': item.originalName,
-                  'popularity': item.popularity,
-                  'profilePath': item.profilePath,
-                  'knownFor': item.knownFor
-                });
+  _$CharacterDao(this.database, this.changeListener)
+    : _queryAdapter = QueryAdapter(database),
+      _characterInsertionAdapter = InsertionAdapter(
+        database,
+        'Character',
+        (Character item) => <String, Object?>{
+          'adult': item.adult == null ? null : (item.adult! ? 1 : 0),
+          'gender': item.gender,
+          'id': item.id,
+          'knownForDepartment': item.knownForDepartment,
+          'name': item.name,
+          'originalName': item.originalName,
+          'popularity': item.popularity,
+          'profilePath': item.profilePath,
+          'knownFor': item.knownFor,
+        },
+      );
 
   final sqflite.DatabaseExecutor database;
 
@@ -246,22 +257,28 @@ class _$CharacterDao extends CharacterDao {
 
   @override
   Future<List<Character>> getCharacters() async {
-    return _queryAdapter.queryList('SELECT * FROM Character LIMIT 20',
-        mapper: (Map<String, Object?> row) => Character(
+    return _queryAdapter.queryList(
+      'SELECT * FROM Character LIMIT 20',
+      mapper:
+          (Map<String, Object?> row) => Character(
             adult: row['adult'] == null ? null : (row['adult'] as int) != 0,
             gender: row['gender'] as int?,
             id: row['id'] as int?,
             knownForDepartment: row['knownForDepartment'] as String?,
             name: row['name'] as String?,
             originalName: row['originalName'] as String?,
-            popularity: row['popularity'] as int?,
+            popularity: row['popularity'] as double?,
             profilePath: row['profilePath'] as String?,
-            knownFor: row['knownFor'] as String?));
+            knownFor: row['knownFor'] as String?,
+          ),
+    );
   }
 
   @override
   Future<void> insertCharacter(Character character) async {
     await _characterInsertionAdapter.insert(
-        character, OnConflictStrategy.replace);
+      character,
+      OnConflictStrategy.replace,
+    );
   }
 }

@@ -31,7 +31,6 @@ class CharactersRepository implements ICharactersRepository {
         }
         return response.results;
       }
-
     } catch (error) {
       throw Exception('Error connecting with the API');
     }

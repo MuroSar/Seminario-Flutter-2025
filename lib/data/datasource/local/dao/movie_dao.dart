@@ -4,7 +4,6 @@ import '../../../../domain/entities/movie.dart';
 
 @dao
 abstract class MovieDao {
-
   @Query('Select * from Movie')
   Future<List<Movie>> getAllMovies();
 

@@ -28,7 +28,6 @@ class MoviesRepository implements IMoviesRepository {
         }
         return response.results;
       }
-
     } catch (error) {
       throw Exception('Error connecting with the API');
     }
@@ -48,7 +47,6 @@ class MoviesRepository implements IMoviesRepository {
         }
         return response.results;
       }
-
     } catch (error) {
       throw Exception('Error connecting with the API');
     }

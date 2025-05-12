@@ -5,22 +5,22 @@ class Movie {
   final bool? adult;
   final String? backdropPath;
   @primaryKey
-  final int? id;
+  final int id;
   final String? originalLanguage;
   final String? originalTitle;
   final String? overview;
-  final int? popularity;
+  final double? popularity;
   final String? posterPath;
   final String? releaseDate;
   final String? title;
   final bool? video;
-  final int? voteAverage;
+  final double? voteAverage;
   final int? voteCount;
 
   Movie({
     this.adult,
     this.backdropPath,
-    this.id,
+    required this.id,
     this.originalLanguage,
     this.originalTitle,
     this.overview,
