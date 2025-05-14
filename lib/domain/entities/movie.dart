@@ -1,24 +1,26 @@
+import 'package:floor/floor.dart';
+
+@entity
 class Movie {
   final bool? adult;
   final String? backdropPath;
-  final List<num>? genreIds;
-  final num? id;
+  @primaryKey
+  final int id;
   final String? originalLanguage;
   final String? originalTitle;
   final String? overview;
-  final num? popularity;
+  final double? popularity;
   final String? posterPath;
   final String? releaseDate;
   final String? title;
   final bool? video;
-  final num? voteAverage;
-  final num? voteCount;
+  final double? voteAverage;
+  final int? voteCount;
 
   Movie({
     this.adult,
     this.backdropPath,
-    this.genreIds,
-    this.id,
+    required this.id,
     this.originalLanguage,
     this.originalTitle,
     this.overview,
@@ -37,7 +39,6 @@ class Movie {
     return Movie(
       adult: json['adult'],
       backdropPath: json['backdrop_path'],
-      genreIds: json['genreids'] != null ? json['genreids'].cast<num>() : [],
       id: json['id'],
       originalLanguage: json['original_language'],
       originalTitle: json['original_title'],

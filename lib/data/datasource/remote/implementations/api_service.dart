@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:seminario_flutter/core/api_constants.dart';
 import 'package:seminario_flutter/data/models/characters_response.dart';
 
 import '../../../../core/credentials.dart';
@@ -26,9 +27,23 @@ class ApiService implements IApiService {
   }
 
   @override
-  Future<MovieResponse> getMoviesByType({required String endpoint}) async {
+  Future<MovieResponse> getPopularMovies() async {
     final response = await http.get(
-      Uri.parse('$endpoint$_apiKey$_apiKeyValue'),
+      Uri.parse('${ApiConstants.popularMoviesEndpoint}$_apiKey$_apiKeyValue'),
+    );
+
+    if (response.statusCode == HttpStatus.ok) {
+      var movieResponse = MovieResponse.fromJson(jsonDecode(response.body));
+      return movieResponse;
+    } else {
+      throw Exception('Failed to load movies');
+    }
+  }
+
+  @override
+  Future<MovieResponse> getTopRatedMovies() async {
+    final response = await http.get(
+      Uri.parse('${ApiConstants.topRatedEndpoint}$_apiKey$_apiKeyValue'),
     );
 
     if (response.statusCode == HttpStatus.ok) {

@@ -1,15 +1,21 @@
+import 'dart:convert';
+
+import 'package:floor/floor.dart';
+
 import 'movie.dart';
 
+@entity
 class Character {
   final bool? adult;
   final int? gender;
-  final num? id;
+  @primaryKey
+  final int? id;
   final String? knownForDepartment;
   final String? name;
   final String? originalName;
-  final num? popularity;
+  final double? popularity;
   final String? profilePath;
-  final List<Movie>? knownFor;
+  final String? knownFor;
 
   Character({
     this.adult,
@@ -24,6 +30,7 @@ class Character {
   });
 
   String get fullProfilePath => 'https://image.tmdb.org/t/p/w500/$profilePath';
+  List<Movie> get knowForMovies => fromList(jsonDecode(knownFor!));
 
   factory Character.fromJson(Map<String, dynamic> json) {
     return Character(
@@ -35,7 +42,7 @@ class Character {
       originalName: json["original_name"],
       popularity: json["popularity"],
       profilePath: json["profile_path"],
-      knownFor: fromList(json['known_for']),
+      knownFor: jsonEncode(json['known_for']),
     );
   }
 

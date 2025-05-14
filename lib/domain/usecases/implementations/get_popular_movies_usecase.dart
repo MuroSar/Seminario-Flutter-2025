@@ -10,6 +10,6 @@ class GetPopularMoviesUseCase implements IUseCase {
 
   @override
   Future<List<Movie>> call() async {
-    return await repository.getMoviesByType(ApiConstants.popularMoviesEndpoint);
+    return await repository.getPopularMovies();
   }
 }
