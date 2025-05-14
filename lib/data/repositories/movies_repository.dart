@@ -1,5 +1,4 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:seminario_flutter/core/api_constants.dart';
 import 'package:seminario_flutter/data/datasource/remote/interfaces/i_api_service.dart';
 import 'package:seminario_flutter/domain/entities/movie.dart';
 import 'package:seminario_flutter/domain/repositories/i_movies_repository.dart';
@@ -8,17 +7,22 @@ import '../datasource/local/interfaces/i_local_database.dart';
 import '../models/movie_response.dart';
 
 class MoviesRepository implements IMoviesRepository {
-  MoviesRepository({required this.apiService, required this.databaseService});
+  MoviesRepository({
+    required this.apiService,
+    required this.databaseService,
+    connectivityPlugin,
+  }) : connectivity = connectivityPlugin ?? Connectivity();
 
   final IApiService apiService;
   final ILocalDatabase databaseService;
+  final Connectivity connectivity; 
 
   @override
   Future<List<Movie>> getPopularMovies() async {
     try {
-      final connectivity = await Connectivity().checkConnectivity();
+      final connectivityResult = await connectivity.checkConnectivity();
 
-      if (connectivity.contains(ConnectivityResult.none)) {
+      if (connectivityResult.contains(ConnectivityResult.none)) {
         return await databaseService.getPopularMovies();
       } else {
         final MovieResponse response = await apiService.getPopularMovies();
